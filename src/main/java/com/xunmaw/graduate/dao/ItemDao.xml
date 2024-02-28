@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xunmaw.graduate.dao.ItemDao">
+    <!-- 先定义一个Interface，UserMapper，然后Mapper文件的namespace指向的就是这个Interface， UserInterface里定义的方法和UserMapper.xml文件中的一样,
+        然后代码里直接使用接口 -->
+
+    <resultMap id="BaseResultItemMap" type="com.xunmaw.graduate.entity.Item">
+        <result column="item_id" property="itemId"/>
+        <result column="item_name" property="itemName"/>
+        <result column="item_content" property="itemContent"/>
+        <result column="item_time" property="itemTime"/>
+        <result column="intention_id" property="intentionId"/>
+        <association property="intention" column="intention_id" select="com.xunmaw.graduate.dao.IntentionDao.selectById"/>
+    </resultMap>
+
+    <sql id="item_field">
+        item_id,item_name,item_content,item_time,intention_id
+    </sql>
+
+    <sql id="item_insert">
+        #{itemId},#{itemName},#{itemContent},#{itemTime},#{intentionId}
+    </sql>
+
+    <!-- 查询时条件   -->
+    <sql id="item_where">
+        <if test="itemId != null">
+            and item_id = #{itemId}
+        </if>
+        <if test="itemName != null">
+            and item_name = #{itemName}
+        </if>
+        <if test="itemContent != null">
+            and item_content = #{itemContent}
+        </if>
+        <if test="itemTime != null">
+            and item_time = #{itemTime}
+        </if>
+        <if test="intentionId != null">
+            and intention_id = #{intentionId}
+        </if>
+    </sql>
+
+    <!-- 更新时条件   -->
+    <sql id="item_update">
+        <if test="itemName != null">
+            item_name = #{itemName},
+        </if>
+        <if test="itemContent != null">
+            item_content = #{itemContent},
+        </if>
+        <if test="itemTime != null">
+            item_time = #{itemTime},
+        </if>
+        <if test="intentionId != null">
+            intention_id = #{intentionId}
+        </if>
+    </sql>
+
+    <insert id="insert" parameterType="com.xunmaw.graduate.entity.Item" useGeneratedKeys="true">
+        insert into item
+        (<include refid="item_field"/>)
+        values
+        (<include refid="item_insert"/>);
+    </insert>
+
+    <delete id="deleteById" parameterType="java.lang.Integer">
+        delete from item where item_id=#{itemId};
+    </delete>
+
+    <delete id="deleteByEntity" parameterType="com.xunmaw.graduate.entity.Item">
+        delete from item where 1=1
+        <include refid="item_where"/>
+    </delete>
+
+    <update id="updateById" parameterType="com.xunmaw.graduate.entity.Item">
+        update item
+        <set>
+            <include refid="item_update"></include>
+        </set>
+        where item_id=#{itemId}
+    </update>
+
+    <update id="updateByEntity" parameterType="com.xunmaw.graduate.entity.Item">
+        update item
+        <set>
+            <include refid="item_update"></include>
+        </set>
+        where 1=1
+        <include refid="item_where"></include>
+    </update>
+
+    <select id="listAll" resultMap="BaseResultItemMap" parameterType="java.lang.String">
+        select
+        <include refid="item_field"/>
+        from item
+        <where>
+            <if test="intentionId!=null">
+                intention_id=#{intentionId}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectById" resultMap="BaseResultItemMap">
+        select
+        <include refid="item_field"/>
+        from item
+        where item_id=#{itemId}
+    </select>
+
+    <select id="selectByIntentionId" resultMap="BaseResultItemMap">
+        select
+        <include refid="item_field"/>
+        from item
+        where intention_id=#{intentionId}
+    </select>
+
+    <!-- 封装纯sql语法-->
+    <!-- 查询一个对象返回map-->
+    <select id="getBySqlReturnMap" resultType="map">
+        ${sql}
+    </select>
+
+    <!-- 查询一个对象返回实体类-->
+    <select id="getBySqlReturnEntity" resultMap="BaseResultItemMap">
+        ${sql}
+    </select>
+
+    <!-- 查询一个对象返回map列表-->
+    <select id="listBySqlReturnMap" resultType="map">
+        ${sql}
+    </select>
+
+    <!-- 查询列表返回实体-->
+    <select id="listBySqlReturnEntity" resultMap="BaseResultItemMap">
+        ${sql}
+    </select>
+
+    <!-- 通过sql修改-->
+    <update id="updateBySql">
+        ${sql}
+    </update>
+
+    <!-- 通过sql删除-->
+    <delete id="deleteBySql">
+         ${sql}
+    </delete>
+</mapper>

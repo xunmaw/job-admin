@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xunmaw.graduate.dao.StudentDao">
+    <!-- 先定义一个Interface，UserMapper，然后Mapper文件的namespace指向的就是这个Interface， UserInterface里定义的方法和UserMapper.xml文件中的一样,
+        然后代码里直接使用接口 -->
+
+    <resultMap id="BaseResultStudentMap" type="com.xunmaw.graduate.entity.Student">
+        <result column="stu_no" property="stuNo"/>
+        <result column="stu_id" property="stuId"/>
+        <result column="stu_name" property="stuName"/>
+        <result column="stu_sex" property="stuSex"/>
+        <result column="stu_birthday" property="stuBirthday"/>
+        <result column="stu_credit" property="stuCredit"/>
+        <result column="political_id" property="politicalId"/>
+        <result column="depart_id" property="departId"/>
+        <result column="major_id" property="majorId"/>
+        <result column="stu_entrance" property="stuEntrance"/>
+        <result column="stu_gradu_time" property="stuGraduTime"/>
+        <result column="place_id" property="placeId"/>
+        <result column="stu_contr" property="stuContr"/>
+        <result column="stu_pass" property="stuPass"/>
+        <result column="state_id" property="stateId"/>
+        <association property="obtainState" column="state_id" select="com.xunmaw.graduate.dao.ObtainStateDao.selectById"/>
+        <association property="political" column="political_id" select="com.xunmaw.graduate.dao.PoliticalDao.selectById"/>
+        <association property="depart" column="depart_id" select="com.xunmaw.graduate.dao.DepartDao.selectById"/>
+        <association property="major" column="major_id" select="com.xunmaw.graduate.dao.MajorDao.selectById"/>
+        <association property="graduatePlace" column="place_id" select="com.xunmaw.graduate.dao.GraduatePlaceDao.selectById"/>
+    </resultMap>
+
+    <sql id="stu_field">
+        stu_no,stu_id,stu_name,stu_sex,stu_birthday,stu_credit,political_id,
+        depart_id,major_id,stu_entrance,stu_gradu_time,place_id,stu_contr,stu_pass,state_id
+    </sql>
+
+    <sql id="stu_insert">
+        #{stuNo},#{stuId},#{stuName},#{stuSex},#{stuBirthday},#{stuCredit},#{politicalId},
+        #{departId},#{majorId},#{stuEntrance},#{stuGraduTime},#{placeId},#{stuContr},#{stuPass},#{stateId}
+    </sql>
+
+    <!-- 查询时条件   -->
+    <sql id="stu_where">
+        <if test="stuId != null and stuId!=''">
+            and stu_id = #{stuId}
+        </if>
+        <if test="stuName != null and stuName!=''">
+            and stu_name = #{stuName}
+        </if>
+        <if test="stuSex != null and stuSex!=''">
+            and stu_sex = #{stuSex}
+        </if>
+        <if test="stuBirthday != null and stuBirthday!=''">
+            and stu_birthday = #{stuBirthday}
+        </if>
+        <if test="stuCredit != null and stuCredit!=''">
+            and stu_credit = #{stuCredit}
+        </if>
+        <if test="politicalId != null and politicalId!=''">
+            and political_id = #{politicalId}
+        </if>
+        <if test="departId != null and departId!=''">
+            and depart_id = #{departId}
+        </if>
+        <if test="majorId != null and majorId!=''">
+            and major_id = #{majorId}
+        </if>
+        <if test="stuEntrance != null and stuEntrance!=''">
+            and stu_entrance = #{stuEntrance}
+        </if>
+        <if test="stuGraduTime != null and stuGraduTime!=''">
+            and stu_gradu_time = #{stuGraduTime}
+        </if>
+        <if test="placeId != null and placeId!=''">
+            and place_id = #{placeId}
+        </if>
+        <if test="stuContr != null and stuContr!=''">
+            and stu_contr = #{stuContr}
+        </if>
+        <if test="stuPass != null and stuPass!=''">
+            and stu_pass = #{stuPass}
+        </if>
+        <if test="stateId != null and stateId!=''">
+            and state_id = #{stateId}
+        </if>
+    </sql>
+
+    <!-- 更新时条件   -->
+    <sql id="stu_update">
+        <if test="stuId != null and stuId!=''">
+            stu_id = #{stuId},
+        </if>
+        <if test="stuName != null and stuName!=''" >
+            stu_name = #{stuName},
+        </if>
+        <if test="stuSex != null and stuSex!=''">
+            stu_sex = #{stuSex},
+        </if>
+        <if test="stuBirthday != null and stuBirthday!=''">
+            stu_birthday = #{stuBirthday},
+        </if>
+        <if test="stuCredit != null and stuCredit!=''">
+            stu_credit = #{stuCredit},
+        </if>
+        <if test="politicalId != null and politicalId!=''">
+            political_id = #{politicalId},
+        </if>
+        <if test="departId != null and departId!=''">
+            depart_id = #{departId},
+        </if>
+        <if test="majorId != null and majorId!=''">
+            major_id = #{majorId},
+        </if>
+        <if test="stuEntrance != null and stuEntrance!=''">
+            stu_entrance = #{stuEntrance},
+        </if>
+        <if test="stuGraduTime != null and stuGraduTime!=''">
+            stu_gradu_time = #{stuGraduTime},
+        </if>
+        <if test="placeId != null and placeId!=''">
+            place_id = #{placeId},
+        </if>
+        <if test="stuContr != null and stuContr!=''">
+            stu_contr = #{stuContr},
+        </if>
+        <if test="stuPass != null and stuPass!=''">
+            stu_pass = #{stuPass},
+        </if>
+        <if test="stateId != null and stateId!=''">
+            state_id = #{stateId}
+        </if>
+    </sql>
+
+    <insert id="insert" parameterType="com.xunmaw.graduate.entity.Student" useGeneratedKeys="true">
+        insert into student
+        (<include refid="stu_field"/>)
+        values
+        (<include refid="stu_insert"/>);
+    </insert>
+
+    <delete id="deleteById" parameterType="java.lang.String">
+        delete from student where stu_id=#{stuId};
+    </delete>
+
+    <delete id="deleteByEntity" parameterType="com.xunmaw.graduate.entity.Student">
+        delete from student where 1=1
+        <include refid="stu_where"/>
+    </delete>
+
+    <update id="updateById" parameterType="com.xunmaw.graduate.entity.Student">
+        update student
+        <set>
+            <include refid="stu_update"></include>
+        </set>
+        where stu_id=#{stuId}
+    </update>
+
+    <update id="update" parameterType="com.xunmaw.graduate.entity.Student">
+        update student
+        <set>
+            <include refid="stu_update"></include>
+        </set>
+        where stu_no=#{stuNo}
+    </update>
+
+    <select id="listAll" resultMap="BaseResultStudentMap">
+        select
+        <include refid="stu_field"/>
+        from student where 1=1
+        <include refid="stu_where"/>
+    </select>
+
+    <select id="selectById" resultMap="BaseResultStudentMap">
+        select
+        <include refid="stu_field"/>
+        from student
+        where stu_id=#{stuId}
+    </select>
+
+    <select id="selectCount" resultType="int">
+        select count(*) from student
+    </select>
+
+    <select id="selectCountBy" resultType="int">
+        select count(*) from student
+        <where>
+            <if test="stuId!=null and stuId!=''">
+                and stu_id=#{stuId}
+            </if>
+            <if test="stuEntrance!=null and stuEntrance!=''">
+                and stu_entrance=#{stuEntrance}
+            </if>
+            <if test="stateId!=null and stateId!=''">
+                and state_id=#{stateId}
+            </if>
+            <if test="majorId!=null and majorId!=''">
+                and major_id=#{majorId}
+            </if>
+        </where>
+    </select>
+
+    <!-- 封装纯sql语法-->
+    <!-- 查询一个对象返回map-->
+    <select id="getBySqlReturnMap" resultType="map">
+        ${sql}
+    </select>
+
+    <!-- 查询一个对象返回实体类-->
+    <select id="getBySqlReturnEntity" resultMap="BaseResultStudentMap">
+        ${sql}
+    </select>
+
+    <!-- 查询一个对象返回map列表-->
+    <select id="listBySqlReturnMap" resultType="map">
+        ${sql}
+    </select>
+
+    <!-- 查询列表返回实体-->
+    <select id="listBySqlReturnEntity" resultMap="BaseResultStudentMap">
+        ${sql}
+    </select>
+
+    <!-- 通过sql修改-->
+    <update id="updateBySql">
+        ${sql}
+    </update>
+
+    <!-- 通过sql删除-->
+    <delete id="deleteBySql">
+         ${sql}
+    </delete>
+
+    <select id="getCount" resultType="int">
+        ${sql}
+    </select>
+
+    <select id="count" resultType="int">
+        ${sql}
+        <if test="placeId!=null and placeId!=''">
+            and place_id =#{placeId}
+        </if>
+        <if test="stuGraduTime!=null and stuGraduTime!=''">
+            and stu_gradu_time =#{stuGraduTime}
+        </if>
+        <if test="departId!=null and departId!=''">
+            and depart_id =#{departId}
+        </if>
+        <if test="majorId!=null and majorId!=''">
+            and major_id =#{majorId}
+        </if>
+    </select>
+</mapper>

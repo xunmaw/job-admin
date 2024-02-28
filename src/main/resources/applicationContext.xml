@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+    <!--Spring配置文件-->
+    <context:property-placeholder location="classpath:jdbc.properties"/>
+    <!--声明数据源，连接数据库-->
+    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource"
+          init-method="init" destroy-method="close">
+        <!--Druid会自动根据url识别驱动类名，如果连接的数据库非常见的数据库,配置属性driverClassName-->
+        <property name="driverClassName" value="${jdbc.driver}"/><!--解决不支持驱动的问题-->
+        <property name="url" value="${jdbc.url}"/><!--使用set注入-->
+        <property name="username" value="${jdbc.user}"/>
+        <property name="password" value="${jdbc.password}"/>
+        <property name="maxActive" value="${jdbc.max}"/>
+    </bean>
+    <!--声明mybatis提供的SqlSessionFactoryBean类，这类内部创建SqlSessionFactory-->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!--set注入，把数据库连接池付给了dataSource属性-->
+        <property name="dataSource" ref="dataSource"/>
+        <!--mybatis主配置文件的位置
+        configLocation属性是Resource类型，读取配置文件
+        他的赋值，使用value，指定文件的路径，使用classpath：表示文件的位置-->
+        <property name="configLocation" value="classpath:mybatis.xml"/>
+    </bean>
+    <!--声明mybatis的扫描器，创建dao对象-->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <!--指定SqlSessionFactory对象的id-->
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+        <!--指定包名，包名是dao接口所在的包名。
+            MapperScannerConfigurer会扫描这个包中的所有接口，把每个接口都执行
+            一次getMapper()方法，得到每个接口的dao对象。创建好的dao对象放入到spring的容器中。
+            dao对象的默认名字是接口名首字母小写-->
+        <property name="basePackage" value="com.xunmaw.graduate.dao"/>
+    </bean>
+    <!--声明service注解@Service所在包的位置，创建service对象-->
+    <context:component-scan base-package="com.xunmaw.graduate.service"/>
+    <!--事务-->
+    <!--mybatis的事务管理器-->
+    <!--<bean class="org.springframework.jdbc.datasource.DataSourceTransactionManager"/>-->
+</beans>

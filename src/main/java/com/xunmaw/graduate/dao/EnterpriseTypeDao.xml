@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xunmaw.graduate.dao.EnterpriseTypeDao">
+    <!-- 先定义一个Interface，UserMapper，然后Mapper文件的namespace指向的就是这个Interface， UserInterface里定义的方法和UserMapper.xml文件中的一样,
+        然后代码里直接使用接口 -->
+    <resultMap id="BaseResultEnterpriseTypeMap" type="com.xunmaw.graduate.entity.EnterpriseType">
+        <result column="type_id" property="typeId"/>
+        <result column="type_name" property="typeName"/>
+    </resultMap>
+
+    <sql id="enterpriseType_field">
+        type_id,type_name
+    </sql>
+
+    <sql id="enterpriseType_insert">
+        #{typeId},#{typeName}
+    </sql>
+
+    <!-- 查询时条件   -->
+    <sql id="enterpriseType_where">
+        <if test="enterpriseTypeId != null">
+            and type_id = #{typeId}
+        </if>
+        <if test="typeName != null">
+            and type_name = #{typeName}
+        </if>
+    </sql>
+
+    <insert id="insert" parameterType="com.xunmaw.graduate.entity.EnterpriseType" useGeneratedKeys="true">
+        insert into enterprisetype
+        (<include refid="enterpriseType_field"/>)
+        values
+        (<include refid="enterpriseType_insert"/>);
+    </insert>
+
+    <delete id="deleteById" parameterType="java.lang.String">
+        delete from enterprisetype where type_id=#{typeId};
+    </delete>
+
+    <delete id="deleteByEntity" parameterType="com.xunmaw.graduate.entity.EnterpriseType">
+        delete from enterprisetype where 1=1
+        <include refid="enterpriseType_where"/>
+    </delete>
+
+    <!--<update id="updateById" parameterType="entity.com.xunmaw.graduate.EnterpriseType">
+        update enterprisetype
+        <set>
+            <include refid="enterpriseType_update"></include>
+        </set>
+        where enterprisetype_id=#{enterprisetypeId}
+    </update>-->
+
+    <!--<update id="updateByEntity" parameterType="entity.com.xunmaw.graduate.EnterpriseType">
+        update enterprisetype
+        <set>
+            <include refid="enterpriseType_update"></include>
+        </set>
+        where 1=1
+        <include refid="enterpriseType_where"></include>
+    </update>-->
+
+    <select id="listAll" resultMap="BaseResultEnterpriseTypeMap">
+        select
+        <include refid="enterpriseType_field"/>
+        from enterprisetype
+    </select>
+
+    <select id="selectById" resultMap="BaseResultEnterpriseTypeMap">
+        select
+        <include refid="enterpriseType_field"/>
+        from enterprisetype
+        where type_id=#{typeId}
+    </select>
+
+    <!-- 封装纯sql语法-->
+    <!-- 查询一个对象返回map-->
+    <select id="getBySqlReturnMap" resultType="map">
+        ${sql}
+    </select>
+
+    <!-- 查询一个对象返回实体类-->
+    <select id="getBySqlReturnEntity" resultMap="BaseResultEnterpriseTypeMap">
+        ${sql}
+    </select>
+
+    <!-- 查询一个对象返回map列表-->
+    <select id="listBySqlReturnMap" resultType="map">
+        ${sql}
+    </select>
+
+    <!-- 查询列表返回实体-->
+    <select id="listBySqlReturnEntity" resultMap="BaseResultEnterpriseTypeMap">
+        ${sql}
+    </select>
+
+    <!-- 通过sql修改-->
+    <update id="updateBySql">
+        ${sql}
+    </update>
+
+    <!-- 通过sql删除-->
+    <delete id="deleteBySql">
+        ${sql}
+    </delete>
+</mapper>

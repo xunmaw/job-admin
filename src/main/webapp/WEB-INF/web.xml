@@ -1,0 +1,70 @@
+<!DOCTYPE web-app PUBLIC
+        "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+        "http://java.sun.com/dtd/web-app_2_3.dtd" >
+
+<web-app>
+
+  <display-name>Archetype Created Web Application</display-name>
+  <!--注册spring的监听器-->
+  <context-param>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>classpath:applicationContext.xml</param-value>
+  </context-param>
+
+  <!--配置解决中文乱码过滤器-->
+  <filter>
+    <filter-name>characterEncodingFilter</filter-name>
+    <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+    <!--初始化参数-->
+    <init-param>
+      <param-name>encoding</param-name>
+      <param-value>UTF-8</param-value>
+    </init-param>
+  </filter>
+  <filter-mapping>
+    <filter-name>characterEncodingFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+  <!-- jsp拦截 -->
+  <filter>
+    <filter-name>LoginFilter</filter-name>
+    <filter-class>com.xunmaw.graduate.filter.LoginFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>LoginFilter</filter-name>
+    <!-- 这里表示对所有的以jsp后缀的文件有效，其它的无效 -->
+    <url-pattern>*.jsp</url-pattern>
+  </filter-mapping>
+
+  <listener>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
+
+  <servlet>
+    <servlet-name>dispatcherServlet</servlet-name>
+    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+    <!--自定义springmvc读取的配置文件的位置-->
+    <init-param>
+      <param-name>contextConfigLocation</param-name>
+      <param-value>classpath:dispatcherServlet.xml</param-value>
+    </init-param>
+    <!--在tomcat启动后创建Servlet对象
+            load-on-startup：表示tomcat启动后创建对象的顺序。他的值时整数，数值越小，
+            tomcat创建对象的时间越早。大于等于0的整数。-->
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>dispatcherServlet</servlet-name>
+    <!--
+        使用框架的时候，url-patter可以使用两种值
+            1.使用扩展名方式，语法 *.xxx，xxx是自定义的扩展名。常用的方式*.do，*.action，*.mvc等等
+                http://localhost:8080/springmvc/some.do
+            2.使用斜杆"/"
+                当你的项目中使用了"/"，他会代替tomcat中default，处理静态资源和未被其他servlet映射的资源
+                导致所有的静态资源都给DispatcherServlet处理，默认情况下DispatcherServlet没有处理静态资源的能力。
+                没有控制器对象能处理静态资源的访问。所以静态资源（HTML，js，图片，css）都是404.
+        -->
+    <url-pattern>/</url-pattern>
+  </servlet-mapping>
+</web-app>

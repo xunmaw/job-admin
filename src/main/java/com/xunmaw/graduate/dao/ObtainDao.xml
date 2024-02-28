@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xunmaw.graduate.dao.ObtainDao">
+    <!-- 先定义一个Interface，UserMapper，然后Mapper文件的namespace指向的就是这个Interface， UserInterface里定义的方法和UserMapper.xml文件中的一样,
+        然后代码里直接使用接口 -->
+    <resultMap id="BaseResultObtainMap" type="com.xunmaw.graduate.entity.Obtain">
+        <result column="obtain_id" property="obtainId"/>
+        <result column="stu_id" property="stuId"/>
+        <result column="obtain_type" property="obtainType"/>
+        <result column="obtain_enterprise" property="obtainEnterprise"/>
+        <result column="obtain_job" property="obtainJob"/>
+        <result column="obtain_time" property="obtainTime"/>
+        <association property="student" column="stu_id" select="com.xunmaw.graduate.dao.StudentDao.selectById"/>
+    </resultMap>
+
+    <sql id="obtain_field">
+        obtain_id,stu_id,obtain_type,obtain_enterprise,obtain_job,obtain_time
+    </sql>
+
+    <sql id="obtain_insert">
+        #{obtainId},#{stuId},#{obtainType},#{obtainEnterprise},#{obtainJob},#{obtainTime}
+    </sql>
+
+    <!-- 查询时条件   -->
+    <sql id="obtain_where">
+        <if test="obtainId != null">
+            and obtain_id = #{obtainId}
+        </if>
+        <if test="stuId != null">
+            and stu_id = #{stuId}
+        </if>
+        <if test="obtainType != null">
+            and obtain_type = #{obtainType}
+        </if>
+        <if test="obtainEnterprise != null">
+            and obtain_enterprise = #{obtainEnterprise}
+        </if>
+        <if test="obtainJob != null">
+            and obtain_job = #{obtainJob}
+        </if>
+        <if test="obtainTime != null">
+            and obtain_time = #{obtainTime}
+        </if>
+    </sql>
+
+    <!-- 更新时条件   -->
+    <sql id="obtain_update">
+        <if test="obtainType != null">
+            obtain_type = #{obtainType},
+        </if>
+        <if test="obtainEnterprise != null">
+            obtain_enterprise = #{obtainEnterprise},
+        </if>
+        <if test="obtainJob != null">
+            obtain_job = #{obtainJob},
+        </if>
+        <if test="obtainTime != null">
+            obtain_time = #{obtainTime}
+        </if>
+    </sql>
+
+    <insert id="insert" parameterType="com.xunmaw.graduate.entity.Obtain" useGeneratedKeys="true">
+        insert into obtain
+        (<include refid="obtain_field"/>)
+        values
+        (<include refid="obtain_insert"/>);
+    </insert>
+
+    <delete id="deleteById" parameterType="java.lang.String">
+        delete from obtain where obtain_id=#{obtainId};
+    </delete>
+
+    <delete id="deleteByEntity" parameterType="com.xunmaw.graduate.entity.Obtain">
+        delete from obtain where 1=1
+        <include refid="obtain_where"/>
+    </delete>
+
+    <update id="updateById" parameterType="com.xunmaw.graduate.entity.Obtain">
+        update obtain
+        <set>
+            <include refid="obtain_update"></include>
+        </set>
+        where obtain_id=#{obtainId}
+    </update>
+
+    <update id="updateByEntity" parameterType="com.xunmaw.graduate.entity.Obtain">
+        update obtain
+        <set>
+            <include refid="obtain_update"></include>
+        </set>
+        where 1=1
+        <include refid="obtain_where"></include>
+    </update>
+
+    <select id="selectById" resultMap="BaseResultObtainMap">
+        select
+        <include refid="obtain_field"/>
+        from obtain
+        where obtain_id=#{obtainId}
+    </select>
+
+    <select id="selectCount" resultType="int">
+        select count(*) from obtain where stu_id=#{stuId}
+    </select>
+
+    <select id="selectCountBy" resultType="int">
+        select count(*) from obtain
+        <if test="stuId!=null and stuId!=''" >
+           where stu_id=#{stuId}
+        </if>
+    </select>
+
+    <select id="findByPage" resultMap="BaseResultObtainMap">
+        select
+        <include refid="obtain_field"/>
+        from obtain where stu_id=#{stuId} limit #{start},#{size}
+    </select>
+
+    <select id="listAll" resultMap="BaseResultObtainMap">
+        select
+        <include refid="obtain_field"/>
+        from obtain
+    </select>
+
+    <!-- 封装纯sql语法-->
+    <!-- 查询一个对象返回map-->
+    <select id="getBySqlReturnMap" resultType="map">
+        ${sql }
+    </select>
+
+    <!-- 查询一个对象返回实体类-->
+    <select id="getBySqlReturnEntity" resultMap="BaseResultObtainMap">
+        ${sql }
+    </select>
+
+    <!-- 查询一个对象返回map列表-->
+    <select id="listBySqlReturnMap" resultType="map">
+        ${sql }
+    </select>
+
+    <!-- 查询列表返回实体-->
+    <select id="listBySqlReturnEntity" resultMap="BaseResultObtainMap">
+        ${sql }
+    </select>
+
+    <!-- 通过sql修改-->
+    <update id="updateBySql">
+        ${sql }
+    </update>
+
+    <!-- 通过sql删除-->
+    <delete id="deleteBySql">
+        ${sql }
+    </delete>
+</mapper>

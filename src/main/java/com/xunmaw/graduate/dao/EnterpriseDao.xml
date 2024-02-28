@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xunmaw.graduate.dao.EnterpriseDao">
+    <!-- 先定义一个Interface，UserMapper，然后Mapper文件的namespace指向的就是这个Interface， UserInterface里定义的方法和UserMapper.xml文件中的一样,
+        然后代码里直接使用接口 -->
+    <resultMap id="BaseResultEnterpriseMap" type="com.xunmaw.graduate.entity.Enterprise">
+        <result column="enterprise_no" property="enterpriseNo"/>
+        <result column="enterprise_id" property="enterpriseId"/>
+        <result column="enterprise_name" property="enterpriseName"/>
+        <result column="region_id" property="regionId"/>
+        <result column="type_id" property="typeId"/>
+        <result column="enterprise_intro" property="enterpriseIntro"/>
+        <result column="contact_name" property="contactName"/>
+        <result column="contact_tel" property="contactTel"/>
+        <result column="contact_email" property="contactEmail"/>
+        <result column="enterprise_pass" property="enterprisePass"/>
+        <association property="region" column="region_id" select="com.xunmaw.graduate.dao.RegionDao.selectById"/>
+        <association property="enterpriseType" column="type_id" select="com.xunmaw.graduate.dao.EnterpriseTypeDao.selectById"/>
+    </resultMap>
+
+    <sql id="enterprise_field">
+        enterprise_no,enterprise_id,enterprise_name,region_id,type_id,enterprise_intro,contact_name,contact_tel,contact_email,enterprise_pass
+    </sql>
+
+    <sql id="enterprise_insert">
+        #{enterpriseNo},#{enterpriseId},#{enterpriseName},#{regionId},#{typeId},#{enterpriseIntro},#{contactName},#{contactTel},#{contactEmail},#{enterprisePass}
+    </sql>
+
+    <!-- 查询时条件   -->
+    <sql id="enterprise_where">
+        <if test="enterpriseNo != null and enterpriseNo!=''">
+            and enterprise_no = #{enterpriseNo}
+        </if>
+        <if test="enterpriseId != null and enterpriseId!=''">
+            and enterprise_id = #{enterpriseId}
+        </if>
+        <if test="enterpriseName != null and enterpriseName!=''">
+            and enterprise_name = #{enterpriseName}
+        </if>
+        <if test="typeId != null and typeId!=''">
+            and type_id = #{typeId}
+        </if>
+        <if test="regionId != null and regionId!=''">
+            and region_id = #{reegionId}
+        </if>
+        <if test="enterpriseIntro != null and enterpriseIntro!=''">
+            and enterprise_intro = #{enterpriseIntro}
+        </if>
+        <if test="contactName != null and contactName!=''">
+            and contact_name = #{contactName}
+        </if>
+        <if test="contactTel != null and contentTel!=''">
+            and contact_tel = #{contactTel}
+        </if>
+        <if test="contactEmail != null and contactEmail!=''">
+            and contact_email = #{contactEmail}
+        </if>
+        <if test="enterprisePass != null and enterprisePass!=''">
+            and enterprise_pass = #{enterprisePass}
+        </if>
+    </sql>
+
+    <!-- 更新时条件   -->
+    <sql id="enterprise_update">
+        <if test="enterpriseId != null and enterpriseId!=''">
+            enterprise_id = #{enterpriseId},
+        </if>
+        <if test="enterpriseName != null and enterpriseName!=''">
+            enterprise_name = #{enterpriseName},
+        </if>
+        <if test="regionId != null and regionId!=''">
+            region_id = #{regionId},
+        </if>
+        <if test="typeId != null and typeId!=''">
+            type_id = #{typeId},
+        </if>
+        <if test="enterpriseType != null and enterpriseType!=''">
+            enterprise_type = #{enterpriseType},
+        </if>
+        <if test="enterpriseIntro != null and enterpriseIntro!=''">
+            enterprise_intro = #{enterpriseIntro},
+        </if>
+        <if test="contactName != null and contactName!=''">
+            contact_name = #{contactName},
+        </if>
+        <if test="contactTel != null and contactTel!=''">
+            contact_tel = #{contactTel},
+        </if>
+        <if test="contactEmail != null and contactEmail!=''">
+            contact_email = #{contactEmail},
+        </if>
+        <if test="enterprisePass != null and enterprisePass!=''">
+            enterprise_pass = #{enterprisePass}
+        </if>
+    </sql>
+
+    <insert id="insert" parameterType="com.xunmaw.graduate.entity.Enterprise" useGeneratedKeys="true">
+        insert into enterprise
+        (<include refid="enterprise_field"/>)
+        values
+        (<include refid="enterprise_insert"/>);
+    </insert>
+
+    <delete id="deleteById" parameterType="java.lang.String">
+        delete from enterprise where enterprise_id=#{enterpriseId};
+    </delete>
+
+    <delete id="deleteByEntity" parameterType="com.xunmaw.graduate.entity.Enterprise">
+        delete from enterprise where 1=1
+        <include refid="enterprise_where"/>
+    </delete>
+
+    <update id="update" parameterType="com.xunmaw.graduate.entity.Enterprise">
+        update enterprise
+        <set>
+            <include refid="enterprise_update"></include>
+        </set>
+        where enterprise_no=#{enterpriseNo}
+    </update>
+
+    <update id="updateById" parameterType="com.xunmaw.graduate.entity.Enterprise">
+        update enterprise
+        <set>
+            <include refid="enterprise_update"></include>
+        </set>
+        where enterprise_id=#{enterpriseId}
+    </update>
+
+    <update id="updateByEntity" parameterType="com.xunmaw.graduate.entity.Enterprise">
+        update enterprise
+        <set>
+            <include refid="enterprise_update"></include>
+        </set>
+        where 1=1
+        <include refid="enterprise_where"></include>
+    </update>
+
+    <select id="selectById" resultMap="BaseResultEnterpriseMap">
+        select
+        <include refid="enterprise_field"/>
+        from enterprise
+        where enterprise_id=#{enterpriseId}
+    </select>
+
+    <select id="listAll" resultMap="BaseResultEnterpriseMap">
+        select * from enterprise
+    </select>
+
+    <select id="getCount" resultType="int">
+        ${sql }
+    </select>
+
+    <!-- 封装纯sql语法-->
+    <!-- 查询一个对象返回map-->
+    <select id="getBySqlReturnMap" resultType="map">
+        ${sql}
+    </select>
+
+    <!-- 查询一个对象返回实体类-->
+    <select id="getBySqlReturnEntity" resultMap="BaseResultEnterpriseMap">
+        ${sql}
+    </select>
+
+    <!-- 查询一个对象返回map列表-->
+    <select id="listBySqlReturnMap" resultType="map">
+        ${sql}
+    </select>
+
+    <!-- 查询列表返回实体-->
+    <select id="listBySqlReturnEntity" resultMap="BaseResultEnterpriseMap">
+        ${sql}
+    </select>
+
+    <!-- 通过sql修改-->
+    <update id="updateBySql">
+        ${sql}
+    </update>
+
+    <!-- 通过sql删除-->
+    <delete id="deleteBySql">
+        ${sql}
+    </delete>
+</mapper>

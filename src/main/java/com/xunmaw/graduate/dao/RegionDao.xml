@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xunmaw.graduate.dao.RegionDao">
+    <!-- 先定义一个Interface，UserMapper，然后Mapper文件的namespace指向的就是这个Interface， UserInterface里定义的方法和UserMapper.xml文件中的一样,
+        然后代码里直接使用接口 -->
+
+    <resultMap id="BaseResultRegionMap" type="com.xunmaw.graduate.entity.Region">
+        <result column="region_id" property="regionId"/>
+        <result column="province_id" property="provinceId"/>
+        <result column="region_name" property="regionName"/>
+        <association property="province" column="province_id" select="com.xunmaw.graduate.dao.ProvinceDao.selectById"/>
+    </resultMap>
+
+    <sql id="region_field">
+        region_id,province_id,region_name
+    </sql>
+
+    <sql id="region_insert">
+        #{regionId},#{provinceId},#{regionName}
+    </sql>
+
+    <!-- 查询时条件   -->
+    <sql id="region_where">
+        <if test="regionId != null">
+            and region_id = #{regionId}
+        </if>
+        <if test="provinceId != null">
+            and province_id = #{provinceId}
+        </if>
+        <if test="regionName != null">
+            and region_name = #{regionName}
+        </if>
+    </sql>
+
+    <!-- 更新时条件   -->
+    <sql id="region_update">
+        <if test="provinceId != null">
+            province_id = #{provinceId},
+        </if>
+        <if test="regionName != null">
+            region_name = #{regionName},
+        </if>
+    </sql>
+
+    <insert id="insert" parameterType="com.xunmaw.graduate.entity.Region" useGeneratedKeys="true">
+        insert into region
+        (<include refid="region_field"/>)
+        values
+        (<include refid="region_insert"/>);
+    </insert>
+
+    <delete id="deleteById" parameterType="java.lang.String">
+        delete from region where region_id=#{regionId};
+    </delete>
+
+    <delete id="deleteByEntity" parameterType="com.xunmaw.graduate.entity.Region">
+        delete from region where 1=1
+        <include refid="region_where"/>
+    </delete>
+
+    <update id="updateById" parameterType="com.xunmaw.graduate.entity.Region">
+        update region
+        <set>
+            <include refid="region_update"></include>
+        </set>
+        where region_id=#{regionId}
+    </update>
+
+    <update id="updateByEntity" parameterType="com.xunmaw.graduate.entity.Region">
+        update region
+        <set>
+            <include refid="region_update"></include>
+        </set>
+        where 1=1
+        <include refid="region_where"></include>
+    </update>
+
+    <select id="listAll" resultMap="BaseResultRegionMap">
+        select
+        <include refid="region_field"/>
+        from region
+    </select>
+
+    <select id="selectById" resultMap="BaseResultRegionMap">
+        select
+        <include refid="region_field"/>
+        from region
+        where region_id=#{regionId}
+    </select>
+
+    <!-- 封装纯sql语法-->
+    <!-- 查询一个对象返回map-->
+    <select id="getBySqlReturnMap" resultType="map">
+        ${sql}
+    </select>
+
+    <!-- 查询一个对象返回实体类-->
+    <select id="getBySqlReturnEntity" resultMap="BaseResultRegionMap">
+        ${sql}
+    </select>
+
+    <!-- 查询一个对象返回map列表-->
+    <select id="listBySqlReturnMap" resultType="map">
+        ${sql}
+    </select>
+
+    <!-- 查询列表返回实体-->
+    <select id="listBySqlReturnEntity" resultMap="BaseResultRegionMap">
+        ${sql}
+    </select>
+
+    <!-- 通过sql修改-->
+    <update id="updateBySql">
+        ${sql}
+    </update>
+
+    <!-- 通过sql删除-->
+    <delete id="deleteBySql">
+         ${sql}
+    </delete>
+
+    <select id="getCount" resultType="int">
+        ${sql}
+    </select>
+
+    <select id="findMaxIndex" resultType="int">
+        ${sql}
+    </select>
+
+    <select id="findAllRegionName" resultType="string">
+        ${sql}
+    </select>
+</mapper>

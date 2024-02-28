@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xunmaw.graduate.dao.MajorDao">
+    <!-- 先定义一个Interface，UserMapper，然后Mapper文件的namespace指向的就是这个Interface， UserInterface里定义的方法和UserMapper.xml文件中的一样,
+        然后代码里直接使用接口 -->
+
+    <resultMap id="BaseResultMajorMap" type="com.xunmaw.graduate.entity.Major">
+        <result column="major_id" property="majorId"/>
+        <result column="depart_id" property="departId"/>
+        <result column="major_name" property="majorName"/>
+        <association property="depart" column="depart_id" select="com.xunmaw.graduate.dao.DepartDao.selectById"/>
+    </resultMap>
+
+    <sql id="major_field">
+        major_id,depart_id,major_name
+    </sql>
+
+    <sql id="major_insert">
+        #{majorId},#{departId},#{majorName}
+    </sql>
+
+    <!-- 查询时条件   -->
+    <sql id="major_where">
+        <if test="majorId != null">
+            and major_id = #{majorId}
+        </if>
+        <if test="departId != null">
+            and depart_id = #{departId}
+        </if>
+        <if test="majorName != null">
+            and major_name = #{majorName}
+        </if>
+    </sql>
+
+    <!-- 更新时条件   -->
+    <sql id="major_update">
+        <if test="departId != null">
+            depart_id = #{departId},
+        </if>
+        <if test="majorName != null">
+            major_name = #{majorName},
+        </if>
+    </sql>
+
+    <insert id="insert" parameterType="com.xunmaw.graduate.entity.Major" useGeneratedKeys="true">
+        insert into major
+        (<include refid="major_field"/>)
+        values
+        (<include refid="major_insert"/>);
+    </insert>
+
+    <delete id="deleteById" parameterType="java.lang.String">
+        delete from major where major_id=#{majorId};
+    </delete>
+
+    <delete id="deleteByEntity" parameterType="com.xunmaw.graduate.entity.Major">
+        delete from major where 1=1
+        <include refid="major_where"/>
+    </delete>
+
+    <update id="updateById" parameterType="com.xunmaw.graduate.entity.Major">
+        update major
+        <set>
+            <include refid="major_update"></include>
+        </set>
+        where major_id=#{majorId}
+    </update>
+
+    <update id="updateByEntity" parameterType="com.xunmaw.graduate.entity.Major">
+        update major
+        <set>
+            <include refid="major_update"></include>
+        </set>
+        where 1=1
+        <include refid="major_where"></include>
+    </update>
+
+    <select id="listAll" resultMap="BaseResultMajorMap" parameterType="java.lang.String">
+        select
+        <include refid="major_field"/>
+        from major
+    </select>
+
+    <select id="selectById" resultMap="BaseResultMajorMap">
+        select
+        <include refid="major_field"/>
+        from major
+        where major_id=#{majorId}
+    </select>
+
+    <!-- 封装纯sql语法-->
+    <!-- 查询一个对象返回map-->
+    <select id="getBySqlReturnMap" resultType="map">
+        ${sql}
+    </select>
+
+    <!-- 查询一个对象返回实体类-->
+    <select id="getBySqlReturnEntity" resultMap="BaseResultMajorMap">
+        ${sql}
+    </select>
+
+    <!-- 查询一个对象返回map列表-->
+    <select id="listBySqlReturnMap" resultType="map">
+        ${sql}
+    </select>
+
+    <!-- 查询列表返回实体-->
+    <select id="listBySqlReturnEntity" resultMap="BaseResultMajorMap">
+        ${sql}
+    </select>
+
+    <!-- 通过sql修改-->
+    <update id="updateBySql">
+        ${sql}
+    </update>
+
+    <!-- 通过sql删除-->
+    <delete id="deleteBySql">
+         ${sql}
+    </delete>
+
+    <select id="getCount" resultType="int">
+        ${sql}
+    </select>
+
+    <select id="findIndex" resultType="string">
+        ${sql}
+    </select>
+</mapper>

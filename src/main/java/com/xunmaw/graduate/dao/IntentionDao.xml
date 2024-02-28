@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xunmaw.graduate.dao.IntentionDao">
+    <!-- 先定义一个Interface，UserMapper，然后Mapper文件的namespace指向的就是这个Interface， UserInterface里定义的方法和UserMapper.xml文件中的一样,
+        然后代码里直接使用接口 -->
+
+    <resultMap id="BaseResultIntentionMap" type="com.xunmaw.graduate.entity.Intention">
+        <result column="intention_id" property="intentionId"/>
+        <result column="stu_id" property="stuId"/>
+        <result column="region_id" property="regionId"/>
+        <result column="intention_salary" property="intentionSalary"/>
+        <result column="intention_major" property="intentionMajor"/>
+        <result column="intention_other" property="intentionOther"/>
+        <result column="intention_state" property="intentionState"/>
+        <association property="student" column="stu_id" select="com.xunmaw.graduate.dao.StudentDao.selectById"/>
+        <association property="region" column="region_id" select="com.xunmaw.graduate.dao.RegionDao.selectById"/>
+    </resultMap>
+
+    <sql id="intention_field">
+        intention_id,stu_id,region_id,intention_salary,intention_major,intention_other,intention_state
+    </sql>
+
+    <sql id="intention_insert">
+        #{intentionId},#{stuId},#{regionId},#{intentionSalary},#{intentionMajor},#{intentionOther},#{intentionState}
+    </sql>
+
+    <!-- 查询时条件   -->
+    <sql id="intention_where">
+        <if test="intentionId != null">
+            and intention_id = #{intentionId}
+        </if>
+        <if test="stuId != null">
+            and stu_id = #{stuId}
+        </if>
+        <if test="intentionPlace != null">
+            and region_id = #{intentionPlace}
+        </if>
+        <if test="intentionSalary != null">
+            and intention_salary = #{intentionSalary}
+        </if>
+        <if test="intentionMajor != null">
+            and intention_major = #{intentionMajor}
+        </if>
+        <if test="intentionOther != null">
+            and intention_other = #{intentionOther}
+        </if>
+        <if test="intentionState != null">
+            and intention_state = #{intentionState}
+        </if>
+    </sql>
+
+    <!-- 更新时条件   -->
+    <sql id="intention_update">
+        <if test="stuId != null">
+            stu_id = #{stuId},
+        </if>
+        <if test="regionId != null">
+            region_id = #{regionId},
+        </if>
+        <if test="intentionSalary != null">
+            intention_salary = #{intentionSalary},
+        </if>
+        <if test="intentionMajor != null">
+            intention_major = #{intentionMajor},
+        </if>
+        <if test="intentionOther != null">
+            intention_other = #{intentionOther},
+        </if>
+        <if test="intentionState != null">
+            intention_state = #{intentionState}
+        </if>
+    </sql>
+
+    <insert id="insert" parameterType="com.xunmaw.graduate.entity.Intention">
+        insert into intention
+        (<include refid="intention_field"/>)
+        values
+        (<include refid="intention_insert"/>);
+    </insert>
+
+    <delete id="deleteById" parameterType="java.lang.Integer">
+        delete from intention where intention_id=#{intentionId};
+    </delete>
+
+    <delete id="deleteByEntity" parameterType="com.xunmaw.graduate.entity.Intention">
+        delete from intention where 1=1
+        <include refid="intention_where"/>
+    </delete>
+
+    <update id="updateById" parameterType="com.xunmaw.graduate.entity.Intention">
+        update intention
+        <set>
+            <include refid="intention_update"></include>
+        </set>
+        where intention_id=#{intentionId}
+    </update>
+
+    <update id="updateByEntity" parameterType="com.xunmaw.graduate.entity.Intention">
+        update intention
+        <set>
+            <include refid="intention_update"></include>
+        </set>
+        where 1=1
+        <include refid="intention_where"></include>
+    </update>
+
+    <select id="listByMap" parameterType="map" resultMap="BaseResultIntentionMap">
+        select
+        <include refid="intention_field"/>
+        from intention
+        where 1=1
+        <include refid="intention_where"></include>
+    </select>
+
+    <select id="listAll" resultMap="BaseResultIntentionMap">
+        select
+        <include refid="intention_field"/>
+        from intention
+        <where>
+            <if test="stuId!=null">
+                stu_id=#{stuId}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectById" resultMap="BaseResultIntentionMap">
+        select
+        <include refid="intention_field"/>
+        from intention
+        where intention_id=#{intentionId}
+    </select>
+
+    <select id="selectCount" resultType="int">
+        select count(*) from intention
+        <if test="stuId!=null and stuId!=''">
+            where stu_id=#{stuId}
+        </if>
+    </select>
+
+    <select id="selectCountBy" resultType="int">
+        select count(*) from intention where intention_state=1
+        <if test="intentionMajor!=null and intentionMajor!=''">
+            and intention_major like concat('%',#{intentionMajor},'%')
+        </if>
+        <if test="regionId!=null and regionId!=''">
+            and region_id=#{regionId}
+        </if>
+    </select>
+
+    <select id="findByPage" resultMap="BaseResultIntentionMap">
+        select
+        <include refid="intention_field"/>
+        from intention where stu_id=#{stuId} limit #{start},#{size}
+    </select>
+
+    <!-- 封装纯sql语法-->
+    <!-- 查询一个对象返回map-->
+    <select id="getBySqlReturnMap" resultType="map">
+        ${sql}
+    </select>
+
+    <!-- 查询一个对象返回实体类-->
+    <select id="getBySqlReturnEntity" resultMap="BaseResultIntentionMap">
+        ${sql}
+    </select>
+
+    <!-- 查询一个对象返回map列表-->
+    <select id="listBySqlReturnMap" resultType="map">
+        ${sql}
+    </select>
+
+    <!-- 查询列表返回实体-->
+    <select id="listBySqlReturnEntity" resultMap="BaseResultIntentionMap">
+        ${sql}
+    </select>
+
+    <!-- 通过sql修改-->
+    <update id="updateBySql">
+        ${sql}
+    </update>
+
+    <!-- 通过sql删除-->
+    <delete id="deleteBySql">
+         ${sql}
+    </delete>
+
+    <select id="getCount" resultType="int">
+        ${sql}
+    </select>
+
+    <select id="count" resultType="int">
+        ${sql}
+        <if test="regionName!=null and regionName!=''">
+            and region_name like concat('%',#{regionName},'%')
+        </if>
+        <if test="intentionMajor!=null and intentionMajor!=''">
+            and intention_major like concat('%',#{intentionMajor},'%')
+        </if>
+    </select>
+</mapper>

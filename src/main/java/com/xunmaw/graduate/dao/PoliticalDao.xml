@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xunmaw.graduate.dao.PoliticalDao">
+    <!-- 先定义一个Interface，UserMapper，然后Mapper文件的namespace指向的就是这个Interface， UserInterface里定义的方法和UserMapper.xml文件中的一样,
+        然后代码里直接使用接口 -->
+    <resultMap id="BaseResultPoliticalMap" type="com.xunmaw.graduate.entity.Political">
+        <result column="political_id" property="politicalId"/>
+        <result column="political_name" property="politicalName"/>
+    </resultMap>
+
+    <sql id="political_field">
+        political_id,political_name
+    </sql>
+
+    <sql id="political_insert">
+        #{politicalId},#{politicalName}
+    </sql>
+
+    <!-- 查询时条件   -->
+    <sql id="political_where">
+        <if test="politicalId != null">
+            and political_id = #{politicalId}
+        </if>
+        <if test="politicalName != null">
+            and political_name = #{politicalName}
+        </if>
+    </sql>
+
+    <!-- 更新时条件   -->
+    <sql id="political_update">
+        <if test="politicalName != null">
+            political_name = #{politicalName},
+        </if>
+    </sql>
+
+    <insert id="insert" parameterType="com.xunmaw.graduate.entity.Political" useGeneratedKeys="true">
+        insert into political
+        (<include refid="political_field"/>)
+        values
+        (<include refid="political_insert"/>);
+    </insert>
+
+    <delete id="deleteById" parameterType="java.lang.String">
+        delete from political where political_id=#{politicalId};
+    </delete>
+
+    <delete id="deleteByEntity" parameterType="com.xunmaw.graduate.entity.Political">
+        delete from political where 1=1
+        <include refid="political_where"/>
+    </delete>
+
+    <update id="updateById" parameterType="com.xunmaw.graduate.entity.Political">
+        update political
+        <set>
+            <include refid="political_update"></include>
+        </set>
+        where political_id=#{politicalId}
+    </update>
+
+    <update id="updateByEntity" parameterType="com.xunmaw.graduate.entity.Political">
+        update political
+        <set>
+            <include refid="political_update"></include>
+        </set>
+        where 1=1
+        <include refid="political_where"></include>
+    </update>
+
+    <select id="listAll" resultMap="BaseResultPoliticalMap">
+        select
+        <include refid="political_field"/>
+        from political
+    </select>
+
+    <select id="selectById" resultMap="BaseResultPoliticalMap">
+        select
+        <include refid="political_field"/>
+        from political
+        where political_id=#{politicalId}
+    </select>
+
+    <!-- 封装纯sql语法-->
+    <!-- 查询一个对象返回map-->
+    <select id="getBySqlReturnMap" resultType="map">
+        ${sql}
+    </select>
+
+    <!-- 查询一个对象返回实体类-->
+    <select id="getBySqlReturnEntity" resultMap="BaseResultPoliticalMap">
+        ${sql}
+    </select>
+
+    <!-- 查询一个对象返回map列表-->
+    <select id="listBySqlReturnMap" resultType="map">
+        ${sql}
+    </select>
+
+    <!-- 查询列表返回实体-->
+    <select id="listBySqlReturnEntity" resultMap="BaseResultPoliticalMap">
+        ${sql}
+    </select>
+
+    <!-- 通过sql修改-->
+    <update id="updateBySql">
+        ${sql}
+    </update>
+
+    <!-- 通过sql删除-->
+    <delete id="deleteBySql">
+         ${sql}
+    </delete>
+</mapper>

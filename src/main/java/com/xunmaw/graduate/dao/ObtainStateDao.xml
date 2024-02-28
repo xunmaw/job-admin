@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xunmaw.graduate.dao.ObtainStateDao">
+    <!-- 先定义一个Interface，UserMapper，然后Mapper文件的namespace指向的就是这个Interface， UserInterface里定义的方法和UserMapper.xml文件中的一样,
+        然后代码里直接使用接口 -->
+    <resultMap id="BaseResultObtainStateMap" type="com.xunmaw.graduate.entity.ObtainState">
+        <result column="state_id" property="stateId"/>
+        <result column="state_name" property="stateName"/>
+    </resultMap>
+
+    <sql id="obtainState_field">
+        state_id,state_name
+    </sql>
+
+    <sql id="obtainState_insert">
+        #{stateId},#{stateName}
+    </sql>
+
+    <!-- 查询时条件   -->
+    <sql id="obtainState_where">
+        <if test="stateId != null">
+            and state_id = #{stateId}
+        </if>
+        <if test="stateName != null">
+            and state_name = #{stateName}
+        </if>
+    </sql>
+
+    <!-- 更新时条件   -->
+    <sql id="obtainState_update">
+        <if test="stateName != null">
+            state_name = #{stateName},
+        </if>
+    </sql>
+
+    <insert id="insert" parameterType="com.xunmaw.graduate.entity.ObtainState" useGeneratedKeys="true">
+        insert into obtainState
+        (<include refid="obtainState_field"/>)
+        values
+        (<include refid="obtainState_insert"/>);
+    </insert>
+
+    <delete id="deleteById" parameterType="java.lang.String">
+        delete from obtainState where state_id=#{stateId};
+    </delete>
+
+    <delete id="deleteByEntity" parameterType="com.xunmaw.graduate.entity.ObtainState">
+        delete from obtainState where 1=1
+        <include refid="obtainState_where"/>
+    </delete>
+
+    <update id="updateById" parameterType="com.xunmaw.graduate.entity.ObtainState">
+        update obtainState
+        <set>
+            <include refid="obtainState_update"></include>
+        </set>
+        where state_id=#{stateId}
+    </update>
+
+    <update id="updateByEntity" parameterType="com.xunmaw.graduate.entity.ObtainState">
+        update obtainState
+        <set>
+            <include refid="obtainState_update"></include>
+        </set>
+        where 1=1
+        <include refid="obtainState_where"></include>
+    </update>
+
+    <select id="selectById" resultMap="BaseResultObtainStateMap">
+        select
+        <include refid="obtainState_field"/>
+        from obtainState
+        where state_id=#{stateId}
+    </select>
+
+    <select id="listAll" resultMap="BaseResultObtainStateMap">
+        select
+        <include refid="obtainState_field"/>
+        from obtainState
+    </select>
+    <!-- 封装纯sql语法-->
+    <!-- 查询一个对象返回map-->
+    <select id="getBySqlReturnMap" resultType="map">
+        ${sql}
+    </select>
+
+    <!-- 查询一个对象返回实体类-->
+    <select id="getBySqlReturnEntity" resultMap="BaseResultObtainStateMap">
+        ${sql}
+    </select>
+
+    <!-- 查询一个对象返回map列表-->
+    <select id="listBySqlReturnMap" resultType="map">
+        ${sql}
+    </select>
+
+    <!-- 查询列表返回实体-->
+    <select id="listBySqlReturnEntity" resultMap="BaseResultObtainStateMap">
+        ${sql}
+    </select>
+
+    <!-- 通过sql修改-->
+    <update id="updateBySql">
+        ${sql}
+    </update>
+
+    <!-- 通过sql删除-->
+    <delete id="deleteBySql">
+        ${sql}
+    </delete>
+</mapper>

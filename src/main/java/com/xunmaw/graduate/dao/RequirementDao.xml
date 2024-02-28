@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xunmaw.graduate.dao.RequirementDao">
+    <!-- 先定义一个Interface，UserMapper，然后Mapper文件的namespace指向的就是这个Interface， UserInterface里定义的方法和UserMapper.xml文件中的一样,
+        然后代码里直接使用接口 -->
+
+    <resultMap id="BaseResultRequirementMap" type="com.xunmaw.graduate.entity.Requirement">
+        <result column="require_id" property="requireId"/>
+        <result column="require_job" property="requireJob"/>
+        <result column="enterprise_id" property="enterpriseId"/>
+        <result column="major_id" property="majorId"/>
+        <result column="require_count" property="requireCount"/>
+        <result column="region_id" property="regionId"/>
+        <result column="require_salary" property="requireSalary"/>
+        <result column="require_other" property="requireOther"/>
+        <result column="require_state" property="requireState"/>
+        <association property="enterprise" column="enterprise_id" select="com.xunmaw.graduate.dao.EnterpriseDao.selectById"/>
+        <association property="major" column="major_id" select="com.xunmaw.graduate.dao.MajorDao.selectById"/>
+        <association property="region" column="region_id" select="com.xunmaw.graduate.dao.RegionDao.selectById"/>
+    </resultMap>
+
+    <sql id="requirement_field">
+        require_id,require_job,enterprise_id,major_id,require_count,region_id,
+        require_salary,require_other,require_state,apply
+    </sql>
+
+    <sql id="requirement_insert">
+        #{requireId},#{requireJob},#{enterpriseId},#{majorId},#{requireCount},#{regionId},
+        #{requireSalary},#{requireOther},#{requireState},#{apply}
+    </sql>
+
+    <!-- 查询时条件   -->
+    <sql id="requirement_where">
+        <if test="requireId != null and requireId!=''">
+            and require_id = #{requireId}
+        </if>
+        <if test="requireJob != null and requireJob!=''">
+            and require_job = #{requireJob}
+        </if>
+        <if test="enterpriseId != null and enterpriseId!=''">
+            and enterprise_id = #{enterpriseId}
+        </if>
+        <if test="majorId != null and majorId!=''">
+            and major_id = #{majorId}
+        </if>
+        <if test="requireCount != null and requireCount!=''">
+            and require_count = #{requireCount}
+        </if>
+        <if test="regionId != null and regionId!=''">
+            and region_id = #{regionId}
+        </if>
+        <if test="requireSalary != null and requireSalary!=''">
+            and require_salary = #{requireSalary}
+        </if>
+        <if test="requireOther != null and requireOther!=''">
+            and require_other = #{requireOther}
+        </if>
+        <if test="requireState != null and requireState!=''">
+            and require_state = #{requireState}
+        </if>
+        <if test="apply != null and apply!=''">
+            and apply = #{apply}
+        </if>
+    </sql>
+
+    <!-- 更新时条件   -->
+    <sql id="requirement_update">
+        <if test="requireJob != null and requireJob!=''">
+            require_job = #{requireJob},
+        </if>
+        <if test="enterpriseId != null and enterpriseId!=''">
+            enterprise_id = #{enterpriseId},
+        </if>
+        <if test="majorId != null and majorId!=''">
+            major_id = #{majorId},
+        </if>
+        <if test="requireCount != null and requireCount!=''">
+            require_count = #{requireCount},
+        </if>
+        <if test="regionId != null and regionId!=''">
+            region_id = #{regionId},
+        </if>
+        <if test="requireSalary != null and requireSalary!=''">
+            require_salary = #{requireSalary},
+        </if>
+        <if test="requireOther != null and requireOther!=''">
+            require_other = #{requireOther},
+        </if>
+        <if test="requireState != null and requireState!=''">
+            require_state = #{requireState},
+        </if>
+        <if test="apply != null and apply!=''">
+            apply = #{apply}
+        </if>
+    </sql>
+
+    <insert id="insert" parameterType="com.xunmaw.graduate.entity.Requirement" useGeneratedKeys="true">
+        insert into requirement
+        (<include refid="requirement_field"/>)
+        values
+        (<include refid="requirement_insert"/>);
+    </insert>
+
+    <delete id="deleteById" parameterType="java.lang.String">
+        delete from requirement where require_id=#{requireId};
+    </delete>
+
+    <delete id="deleteByEntity" parameterType="com.xunmaw.graduate.entity.Requirement">
+        delete from requirement where 1=1
+        <include refid="requirement_where"/>
+    </delete>
+
+    <update id="updateById" parameterType="com.xunmaw.graduate.entity.Requirement">
+        update requirement
+        <set>
+            <include refid="requirement_update"></include>
+        </set>
+        where require_id=#{requireId}
+    </update>
+
+    <update id="update" parameterType="com.xunmaw.graduate.entity.Requirement">
+        update requirement
+        <set>
+            <include refid="requirement_update"></include>
+        </set>
+        where 1=1
+        <include refid="requirement_where"></include>
+    </update>
+
+    <select id="listAll" resultMap="BaseResultRequirementMap">
+        select
+        <include refid="requirement_field"/>
+        from requirement where 1=1
+        <if test="enterpriseId!=null and enterpriseId!=''">
+            and enterprise_id=#{enterpriseId}
+        </if>
+    </select>
+
+    <select id="selectById" resultMap="BaseResultRequirementMap">
+        select
+        <include refid="requirement_field"/>
+        from requirement
+        where require_id=#{requireId}
+    </select>
+
+    <select id="selectCount" resultType="int">
+        select count(*) from requirement
+    </select>
+
+    <select id="selectCountBy" resultType="int">
+        select count(*) from requirement
+        where 1=1
+        <if test="enterpriseId!=null and enterpriseId!=''">
+            and enterprise_id=#{enterpriseId}
+        </if>
+        <if test="requireJob!=null and requireJob!=''">
+            and require_job=#{requireJob}
+        </if>
+        <if test="requireState!=null and requireState!=''">
+             and require_state=#{requireState}
+        </if>
+    </select>
+
+    <!-- 封装纯sql语法-->
+    <!-- 查询一个对象返回map-->
+    <select id="getBySqlReturnMap" resultType="map">
+        ${sql}
+    </select>
+
+    <!-- 查询一个对象返回实体类-->
+    <select id="getBySqlReturnEntity" resultMap="BaseResultRequirementMap">
+        ${sql}
+    </select>
+
+    <!-- 查询一个对象返回map列表-->
+    <select id="listBySqlReturnMap" resultType="map">
+        ${sql}
+    </select>
+
+    <!-- 查询列表返回实体-->
+    <select id="listBySqlReturnEntity" resultMap="BaseResultRequirementMap">
+        ${sql}
+    </select>
+
+    <!-- 通过sql修改-->
+    <update id="updateBySql">
+        ${sql}
+    </update>
+
+    <!-- 通过sql删除-->
+    <delete id="deleteBySql">
+         ${sql}
+    </delete>
+
+    <select id="getCount" resultType="int">
+        ${sql }
+    </select>
+</mapper>

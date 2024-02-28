@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xunmaw.graduate.dao.ProvinceDao">
+    <!-- 先定义一个Interface，UserMapper，然后Mapper文件的namespace指向的就是这个Interface， UserInterface里定义的方法和UserMapper.xml文件中的一样,
+        然后代码里直接使用接口 -->
+    <resultMap id="BaseResultProvinceMap" type="com.xunmaw.graduate.entity.Province">
+        <result column="province_id" property="provinceId"/>
+        <result column="province_name" property="provinceName"/>
+    </resultMap>
+
+    <sql id="province_field">
+        province_id,province_name
+    </sql>
+
+    <sql id="province_insert">
+        #{provinceId},#{provinceName}
+    </sql>
+
+    <!-- 查询时条件   -->
+    <sql id="province_where">
+        <if test="provinceId != null">
+            and province_id = #{provinceId}
+        </if>
+        <if test="provinceName != null">
+            and province_name = #{provinceName}
+        </if>
+    </sql>
+
+    <!-- 更新时条件   -->
+    <sql id="province_update">
+        <if test="provinceName != null">
+            province_name = #{provinceName},
+        </if>
+    </sql>
+
+    <insert id="insert" parameterType="com.xunmaw.graduate.entity.Province" useGeneratedKeys="true">
+        insert into province
+        (<include refid="province_field"/>)
+        values
+        (<include refid="province_insert"/>);
+    </insert>
+
+    <delete id="deleteById" parameterType="java.lang.String">
+        delete from province where province_id=#{provinceId};
+    </delete>
+
+    <delete id="deleteByEntity" parameterType="com.xunmaw.graduate.entity.Province">
+        delete from province where 1=1
+        <include refid="province_where"/>
+    </delete>
+
+    <update id="updateById" parameterType="com.xunmaw.graduate.entity.Province">
+        update province
+        <set>
+            <include refid="province_update"></include>
+        </set>
+        where province_id=#{provinceId}
+    </update>
+
+    <update id="updateByEntity" parameterType="com.xunmaw.graduate.entity.Province">
+        update province
+        <set>
+            <include refid="province_update"></include>
+        </set>
+        where 1=1
+        <include refid="province_where"></include>
+    </update>
+
+    <select id="selectById" resultMap="BaseResultProvinceMap">
+        select
+        <include refid="province_field"/>
+        from province
+        where province_id=#{provinceId}
+    </select>
+
+    <select id="listAll" resultMap="BaseResultProvinceMap">
+        select * from province
+    </select>
+
+    <!-- 封装纯sql语法-->
+    <!-- 查询一个对象返回map-->
+    <select id="getBySqlReturnMap" resultType="map">
+        ${sql}
+    </select>
+
+    <!-- 查询一个对象返回实体类-->
+    <select id="getBySqlReturnEntity" resultMap="BaseResultProvinceMap">
+        ${sql}
+    </select>
+
+    <!-- 查询一个对象返回map列表-->
+    <select id="listBySqlReturnMap" resultType="map">
+        ${sql}
+    </select>
+
+    <!-- 查询列表返回实体-->
+    <select id="listBySqlReturnEntity" resultMap="BaseResultProvinceMap">
+        ${sql}
+    </select>
+
+    <!-- 通过sql修改-->
+    <update id="updateBySql">
+        ${sql}
+    </update>
+
+    <!-- 通过sql删除-->
+    <delete id="deleteBySql">
+         ${sql}
+    </delete>
+
+    <select id="getCount" resultType="int">
+        ${sql}
+    </select>
+
+    <select id="findMaxIndex" resultType="string">
+        ${sql}
+    </select>
+</mapper>

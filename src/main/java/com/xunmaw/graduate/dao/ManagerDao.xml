@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xunmaw.graduate.dao.ManagerDao">
+    <!-- 先定义一个Interface，UserMapper，然后Mapper文件的namespace指向的就是这个Interface， UserInterface里定义的方法和UserMapper.xml文件中的一样,
+        然后代码里直接使用接口 -->
+
+    <resultMap id="BaseResultManagerMap" type="com.xunmaw.graduate.entity.Manager">
+        <result column="manager_id" property="managerId"/>
+        <result column="manager_name" property="managerName"/>
+        <result column="manager_pass" property="managerPass"/>
+        <result column="manager_contr" property="managerContr"/>
+    </resultMap>
+
+    <sql id="manager_field">
+        manager_id,manager_name,manager_pass,manager_contr
+    </sql>
+
+    <sql id="manager_insert">
+        #{managerId},#{managerName},#{managerPass},#{managerContr}
+    </sql>
+
+    <!-- 查询时条件   -->
+    <sql id="manager_where">
+        <if test="managerId != null and managerId!=''">
+            and manager_id = #{managerId}
+        </if>
+        <if test="managerName != null and managerNme!=''">
+            and manager_name = #{managerName}
+        </if>
+        <if test="managerPass != null and managerPass!=''">
+            and manager_pass = #{managerPass}
+        </if>
+        <if test="managerContr != null and managerContr!=''">
+            and manager_contr = #{managerContr}
+        </if>
+    </sql>
+
+    <!-- 更新时条件   -->
+    <sql id="manager_update">
+        <if test="managerPass != null and managerPass!=''">
+            manager_pass = #{managerPass},
+        </if>
+        <if test="managerContr != null and managerContr!=''">
+            manager_contr = #{managerContr}
+        </if>
+    </sql>
+
+    <insert id="insert" parameterType="com.xunmaw.graduate.entity.Manager" useGeneratedKeys="true">
+        insert into manager
+        (<include refid="manager_field"/>)
+        values
+        (<include refid="manager_insert"/>);
+    </insert>
+
+    <delete id="deleteById" parameterType="java.lang.String">
+        delete from manager where manager_id=#{managerId};
+    </delete>
+
+    <delete id="deleteByEntity" parameterType="com.xunmaw.graduate.entity.Manager">
+        delete from manager where 1=1
+        <include refid="manager_where"/>
+    </delete>
+
+    <update id="updateById" parameterType="com.xunmaw.graduate.entity.Manager">
+        update manager
+        <set>
+            <include refid="manager_update"></include>
+        </set>
+        where manager_id=#{managerId}
+    </update>
+
+    <update id="updateByEntity" parameterType="com.xunmaw.graduate.entity.Manager">
+        update manager
+        <set>
+            <include refid="manager_update"></include>
+        </set>
+        where 1=1
+        <include refid="manager_where"></include>
+    </update>
+
+    <select id="login" resultMap="BaseResultManagerMap">
+        select * from manager where manager_id=#{managerId} and manager_pass=#{managerPass}
+    </select>
+
+    <select id="listAll" resultMap="BaseResultManagerMap" parameterType="java.lang.String">
+        select
+        <include refid="manager_field"/>
+        from manager
+    </select>
+
+    <select id="selectById" resultMap="BaseResultManagerMap">
+        select
+        <include refid="manager_field"/>
+        from manager
+        where manager_id=#{managerId}
+    </select>
+
+    <!-- 封装纯sql语法-->
+    <!-- 查询一个对象返回map-->
+    <select id="getBySqlReturnMap" resultType="map">
+        ${sql}
+    </select>
+
+    <!-- 查询一个对象返回实体类-->
+    <select id="getBySqlReturnEntity" resultMap="BaseResultManagerMap">
+        ${sql}
+    </select>
+
+    <!-- 查询一个对象返回map列表-->
+    <select id="listBySqlReturnMap" resultType="map">
+        ${sql}
+    </select>
+
+    <!-- 查询列表返回实体-->
+    <select id="listBySqlReturnEntity" resultMap="BaseResultManagerMap">
+        ${sql}
+    </select>
+
+    <!-- 通过sql修改-->
+    <update id="updateBySql">
+        ${sql}
+    </update>
+
+    <!-- 通过sql删除-->
+    <delete id="deleteBySql">
+         ${sql}
+    </delete>
+</mapper>

@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xunmaw.graduate.dao.RequireNoteDao">
+    <!-- 先定义一个Interface，UserMapper，然后Mapper文件的namespace指向的就是这个Interface， UserInterface里定义的方法和UserMapper.xml文件中的一样,
+        然后代码里直接使用接口 -->
+
+    <resultMap id="BaseResultRequireNoteMap" type="com.xunmaw.graduate.entity.RequireNote">
+        <result column="note_id" property="noteId"/>
+        <result column="stu_id" property="stuId"/>
+        <result column="require_id" property="requireId"/>
+        <result column="enterprise_id" property="enterpriseId"/>
+        <result column="state_id" property="stateId"/>
+        <result column="note_day" property="noteDay"/>
+        <association property="student" column="stu_id" select="com.xunmaw.graduate.dao.StudentDao.selectById"/>
+        <association property="requirement" column="require_id" select="com.xunmaw.graduate.dao.RequirementDao.selectById"/>
+        <association property="enterprise" column="enterprise_id" select="com.xunmaw.graduate.dao.EnterpriseDao.selectById"/>
+    </resultMap>
+
+    <sql id="requireNote_field">
+        note_id,stu_id,require_id,state_id,enterprise_id,note_day
+    </sql>
+
+    <sql id="requireNote_insert">
+        #{noteId},#{stuId},#{requireId},#{stateId},#{enterpriseId},#{noteDay}
+    </sql>
+
+    <!-- 查询时条件   -->
+    <sql id="requireNote_where">
+        <if test="noteId != null and noteId!=''">
+            and note_id = #{noteId}
+        </if>
+        <if test="stuId != null and stuId!=''">
+            and stu_id = #{stuId}
+        </if>
+        <if test="requireId != null and requireId!=''">
+            and require_id = #{requireId}
+        </if>
+        <if test="stateId != null and stateId!=''">
+            and state_id = #{stateId}
+        </if>
+        <if test="enterpriseId != null and enterpriseId!=''">
+            and enterprise_id = #{enterpriseId}
+        </if>
+        <if test="noteDay != null and noteDay!=''">
+            and note_day = #{noteDay}
+        </if>
+    </sql>
+
+    <!-- 更新时条件   -->
+    <sql id="requireNote_update">
+        <if test="stuId != null and stuId!=''">
+            stu_id = #{stuId},
+        </if>
+        <if test="requireId != null and requireId!=''">
+            require_id = #{requireId},
+        </if>
+        <if test="stateId != null and stateId!=''">
+            state_id = #{stateId},
+        </if>
+        <if test="enterpriseId != null and enterpriseId!=''">
+            enterprise_id = #{enterpriseId}
+        </if>
+        <if test="noteDay != null and noteDay!=''">
+            note_day = #{noteDay}
+        </if>
+    </sql>
+
+    <insert id="insert" parameterType="com.xunmaw.graduate.entity.RequireNote" useGeneratedKeys="true">
+        insert into requirenote
+        (<include refid="requireNote_field"/>)
+        values
+        (<include refid="requireNote_insert"/>);
+    </insert>
+
+    <delete id="deleteById" parameterType="java.lang.String">
+        delete from requirenote where note_id=#{noteId};
+    </delete>
+
+    <delete id="deleteByEntity" parameterType="com.xunmaw.graduate.entity.RequireNote">
+        delete from requirenote where 1=1
+        <include refid="requireNote_where"/>
+    </delete>
+
+    <update id="updateById" parameterType="com.xunmaw.graduate.entity.RequireNote">
+        update requirenote
+        <set>
+            <include refid="requireNote_update"></include>
+        </set>
+        where note_id=#{noteId}
+    </update>
+
+    <update id="update" parameterType="com.xunmaw.graduate.entity.RequireNote">
+        update requirenote
+        <set>
+            <include refid="requireNote_update"></include>
+        </set>
+        where 1=1
+        <include refid="requireNote_where"></include>
+    </update>
+
+    <select id="listAll" resultMap="BaseResultRequireNoteMap">
+        select
+        <include refid="requireNote_field"/>
+        from requirenote where 1=1
+        <if test="enterpriseId!=null and enterpriseId!=''">
+            and enterprise_id=#{enterpriseId}
+        </if>
+    </select>
+
+    <select id="selectById" resultMap="BaseResultRequireNoteMap">
+        select
+        <include refid="requireNote_field"/>
+        from requirenote
+        where note_id=#{noteId}
+    </select>
+
+    <select id="selectCount" resultType="int">
+        select count(*) from requirenote
+        <where>
+            <if test="stuId!=null and stuId!=''">
+                and stu_id=#{stuId}
+            </if>
+        </where>
+    </select>
+
+    <!-- 封装纯sql语法-->
+    <!-- 查询一个对象返回map-->
+    <select id="getBySqlReturnMap" resultType="map">
+        ${sql}
+    </select>
+
+    <!-- 查询一个对象返回实体类-->
+    <select id="getBySqlReturnEntity" resultMap="BaseResultRequireNoteMap">
+        ${sql}
+    </select>
+
+    <!-- 查询一个对象返回map列表-->
+    <select id="listBySqlReturnMap" resultType="map">
+        ${sql}
+    </select>
+
+    <!-- 查询列表返回实体-->
+    <select id="listBySqlReturnEntity" resultMap="BaseResultRequireNoteMap">
+        ${sql}
+    </select>
+
+    <!-- 通过sql修改-->
+    <update id="updateBySql">
+        ${sql}
+    </update>
+
+    <!-- 通过sql删除-->
+    <delete id="deleteBySql">
+         ${sql}
+    </delete>
+
+    <select id="getCount" resultType="int">
+        ${sql}
+    </select>
+</mapper>

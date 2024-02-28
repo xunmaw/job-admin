@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xunmaw.graduate.dao.DepartDao">
+    <!-- 先定义一个Interface，UserMapper，然后Mapper文件的namespace指向的就是这个Interface， UserInterface里定义的方法和UserMapper.xml文件中的一样,
+        然后代码里直接使用接口 -->
+    <resultMap id="BaseResultDepartMap" type="com.xunmaw.graduate.entity.Depart">
+        <result column="depart_id" property="departId"/>
+        <result column="depart_name" property="departName"/>
+    </resultMap>
+
+    <sql id="depart_field">
+        depart_id,depart_name
+    </sql>
+
+    <sql id="depart_insert">
+        #{departId},#{departName}
+    </sql>
+
+    <!-- 查询时条件   -->
+    <sql id="depart_where">
+        <if test="departId != null">
+            and depart_id = #{departId}
+        </if>
+        <if test="departName != null">
+            and depart_name = #{departName}
+        </if>
+    </sql>
+
+    <!-- 更新时条件   -->
+    <sql id="depart_update">
+        <if test="departName != null">
+            depart_name = #{departName},
+        </if>
+    </sql>
+
+    <insert id="insert" parameterType="com.xunmaw.graduate.entity.Depart" useGeneratedKeys="true">
+        insert into depart
+        (<include refid="depart_field"/>)
+        values
+        (<include refid="depart_insert"/>);
+    </insert>
+
+    <delete id="deleteById" parameterType="java.lang.Integer">
+        delete from depart where depart_id=#{departIrd};
+    </delete>
+
+    <delete id="deleteByEntity" parameterType="com.xunmaw.graduate.entity.Depart">
+        delete from depart where 1=1
+        <include refid="depart_where"/>
+    </delete>
+
+    <update id="updateById" parameterType="com.xunmaw.graduate.entity.Depart">
+        update depart
+        <set>
+            <include refid="depart_update"></include>
+        </set>
+        where depart_id=#{departId}
+    </update>
+
+    <update id="updateByEntity" parameterType="com.xunmaw.graduate.entity.Depart">
+        update depart
+        <set>
+            <include refid="depart_update"></include>
+        </set>
+        where 1=1
+        <include refid="depart_where"></include>
+    </update>
+
+    <select id="listAll" resultMap="BaseResultDepartMap">
+        select
+        m.depart_id,m.depart_id,d.depart_name,m.depart_name
+        from depart m
+        left join depart d on m.depart_id=d.depart_id
+    </select>
+
+    <select id="selectById" resultMap="BaseResultDepartMap">
+        select
+        <include refid="depart_field"/>
+        from depart
+        where depart_id=#{departId}
+    </select>
+
+    <!-- 封装纯sql语法-->
+    <!-- 查询一个对象返回map-->
+    <select id="getBySqlReturnMap" resultType="map">
+        ${sql}
+    </select>
+
+    <!-- 查询一个对象返回实体类-->
+    <select id="getBySqlReturnEntity" resultMap="BaseResultDepartMap">
+        ${sql}
+    </select>
+
+    <!-- 查询一个对象返回map列表-->
+    <select id="listBySqlReturnMap" resultType="map">
+        ${sql}
+    </select>
+
+    <!-- 查询列表返回实体-->
+    <select id="listBySqlReturnEntity" resultMap="BaseResultDepartMap">
+        ${sql}
+    </select>
+
+    <!-- 通过sql修改-->
+    <update id="updateBySql">
+        ${sql}
+    </update>
+
+    <!-- 通过sql删除-->
+    <delete id="deleteBySql">
+         ${sql}
+    </delete>
+
+    <select id="getCount" resultType="int">
+        ${sql}
+    </select>
+</mapper>
